@@ -22,7 +22,7 @@ jobs:
     - name: Log in to registry
       uses: docker/login-action@v2
       with:
-        registry: https://bitcubecontainer.azurecr.io/
+        registry: bitcubecontainer.azurecr.io
         username: ${{ secrets.AzureAppService_ContainerUsername_a9ca4cea3ecd4299a6b75cfbfbbfc4bb }}
         password: ${{ secrets.AzureAppService_ContainerPassword_2ab139deab1a445488fafbf037105f9e }}
 
@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: bitcubecontainer.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_a9ca4cea3ecd4299a6b75cfbfbbfc4bb }}/:${{ github.sha }}
+        tags: bitcubecontainer.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_a9ca4cea3ecd4299a6b75cfbfbbfc4bb }}:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
@@ -48,4 +48,4 @@ jobs:
         app-name: 'BitCubeDevDockerApp'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_f509ef7b08104b73b65ed869f9170608 }}
-        images: 'bitcubecontainer.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_a9ca4cea3ecd4299a6b75cfbfbbfc4bb }}/:${{ github.sha }}'
+        images: 'bitcubecontainer.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_a9ca4cea3ecd4299a6b75cfbfbbfc4bb }}:${{ github.sha }}'
