@@ -22,11 +22,10 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Restore dependencies
-      run: dotnet restore BitcubeDeveloperTaskSolution/BitcubeDeveloperTaskSolution.sln
+      run: dotnet restore BitcubeDeveloperTaskSolutionAPI/BitcubeDeveloperTaskSolution.sln
 
     - name: Build
-      run: dotnet build BitcubeDeveloperTaskSolution/BitcubeDeveloperTaskSolution.sln --no-restore --configuration Release
+      run: dotnet build BitcubeDeveloperTaskSolutionAPI/BitcubeDeveloperTaskSolution.sln --no-restore
 
     - name: Test
-      run: dotnet test BitcubeDeveloperTaskSolution/BitcubeDeveloperTaskSolution.sln --no-build --verbosity normal
-
+      run: dotnet test BitcubeDeveloperTaskSolutionAPI/BitcubeDeveloperTaskSolution.sln --no-build --verbosity normal
