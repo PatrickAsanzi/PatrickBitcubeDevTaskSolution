@@ -1,4 +1,8 @@
-﻿using Domain.Repositories;
+﻿using Application.ProductManagement;
+using Application.UserMangement;
+using Domain;
+using Domain.Repositories;
+using Domain.Services;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -38,6 +42,10 @@ namespace WebApi
             // Add your repository interfaces and implementations for Dependency Injection
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IUserManagementService, UserManagementService>();
+            services.AddScoped<IProductManagementService, ProductManagementService>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // Add services to the container
             services.AddControllers();

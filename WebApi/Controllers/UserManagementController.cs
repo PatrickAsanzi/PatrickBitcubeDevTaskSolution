@@ -8,21 +8,21 @@ namespace WebApi.Controllers
     [Route("[controller]")]
     public class UserManagementController : ControllerBase
     {
-        private IUserManagementService _userManagementService;
+        private readonly IUserManagementService _userManagementService;
         public UserManagementController(IUserManagementService userManagementService) 
         { 
             _userManagementService = userManagementService;
         }
-        [HttpGet]
-        public IActionResult Get()
-        {
-            return Ok("Hello World");
-        }
 
-        [HttpPost]
-        public ActionResult UpdateBenchmark([FromBody] UserCreateDto userCreateDto)
+        [HttpPost("CreateUser")]
+        public ActionResult<ViewUserDto> CreateUser([FromBody] UserCreateDto userCreateDto)
         {
             var user = _userManagementService.Create(userCreateDto);
+
+            if (user == null) // Check if user creation failed
+            {
+                return BadRequest("User creation failed.");
+            }
             return Ok(user);
         }
     }
