@@ -5,7 +5,7 @@ namespace Domain.Repositories
     public interface IUserRepository
     {
         Task<ApplicationUser> GetByIdAsync(int userId);
-        Task AddAsync(ApplicationUser user);
+        public ApplicationUser Add(ApplicationUser user); 
         Task UpdateAsync(ApplicationUser user);
         Task DeleteAsync(int userId);
     }

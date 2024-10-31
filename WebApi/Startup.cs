@@ -1,4 +1,8 @@
-﻿using Domain.Repositories;
+﻿using Application.ProductManagement;
+using Application.UserMangement;
+using Domain;
+using Domain.Repositories;
+using Domain.Services;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -38,6 +42,10 @@ namespace WebApi
             // Add your repository interfaces and implementations for Dependency Injection
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IUserManagementService, UserManagementService>();
+            services.AddScoped<IProductManagementService, ProductManagementService>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // Add services to the container
             services.AddControllers();
@@ -50,20 +58,18 @@ namespace WebApi
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // Configure the HTTP request pipeline.
-            if (env.IsDevelopment())
+
+            app.UseDeveloperExceptionPage(); // Optional: For detailed error pages in Development
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
             {
-                app.UseDeveloperExceptionPage(); // Optional: For detailed error pages in Development
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "BitcubeDeveloperTask API V1"); // Update with your endpoint
-                });
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error"); // Handle exceptions gracefully in production
-                app.UseHsts(); // HTTP Strict Transport Security
-            }
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "BitcubeDeveloperTask API V1"); // Update with your endpoint
+            });
+
+
+            app.UseExceptionHandler("/Home/Error"); // Handle exceptions gracefully in production
+            app.UseHsts(); // HTTP Strict Transport Security
+
 
             app.UseHttpsRedirection();
             app.UseRouting(); // Add routing middleware
