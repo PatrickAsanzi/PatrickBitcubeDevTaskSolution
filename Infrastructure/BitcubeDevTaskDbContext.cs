@@ -2,23 +2,20 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace Infrastructure
 {
-    public class BitcubeDevTaskDbContext: IdentityDbContext<User>
+    public class BitcubeDevTaskDbContext : IdentityDbContext<ApplicationUser>
     {
         public BitcubeDevTaskDbContext(DbContextOptions<BitcubeDevTaskDbContext> options)
-         : base(options)
+          : base(options)
         {
         }
 
-        public DbSet<User> User { get; set; }
         public DbSet<Product> Product { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>()
-                .HasKey(u => u.UserId);
+            base.OnModelCreating(modelBuilder); // Make sure to call this!
 
             modelBuilder.Entity<Product>()
                 .HasKey(p => p.ProductId);

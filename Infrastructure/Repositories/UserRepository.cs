@@ -12,18 +12,18 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<User> GetByIdAsync(int userId)
+        public async Task<ApplicationUser> GetByIdAsync(int userId)
         {
             return await _context.Users.FindAsync(userId);
         }
 
-        public async Task AddAsync(User user)
+        public async Task AddAsync(ApplicationUser user)
         {
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(User user)
+        public async Task UpdateAsync(ApplicationUser user)
         {
             _context.Users.Update(user);
             await _context.SaveChangesAsync();

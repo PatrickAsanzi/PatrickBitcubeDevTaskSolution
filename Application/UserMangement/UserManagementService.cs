@@ -15,7 +15,7 @@ namespace Application.UserMangement
 
         public async Task Create(UserCreateDto userCreateDto)
         {
-            var user = new User(userCreateDto.FirstName, userCreateDto.LastName, userCreateDto.UserName);
+            var user = new ApplicationUser(userCreateDto.FirstName, userCreateDto.LastName);
             await _userRepository.AddAsync(user);
         }
     }

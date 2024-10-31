@@ -1,28 +1,30 @@
-﻿using Domain.Entities;
-using Domain.Repositories;
+﻿using Domain.Repositories;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace WebApi
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+
+        public Startup(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public void ConfigureServices(IServiceCollection services)
         {
             // Add SQLite DbContext
             services.AddDbContext<BitcubeDevTaskDbContext>(options =>
-                options.UseSqlite("Data Source=../BitcubeDeveloperTask.Infrastructure/Data/db.sqlite"));
+                options.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
 
             // Configure Identity
-            services.AddIdentity<User, IdentityRole>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = true; // Adjust according to your needs
-            })
-            .AddEntityFrameworkStores<BitcubeDevTaskDbContext>()
-            .AddDefaultTokenProviders();
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<BitcubeDevTaskDbContext>()
+                .AddDefaultTokenProviders();
 
             // Add CORS policy
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>

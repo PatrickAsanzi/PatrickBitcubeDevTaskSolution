@@ -1,12 +1,17 @@
-﻿namespace Domain.Entities
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
+namespace Domain.Entities
 {
     public class Product
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ProductId { get; private set; }
-        public int UserId { get; private set; }
         public string? Name { get; private set; }
         public decimal Price { get; private set; }
         public int Quantity { get; private set; }
-        public User? User { get; private set; }  // Navigation property to User
+        public string UserId { get; private set; }
+        public ApplicationUser? User { get; private set; }  // Navigation property to User
     }
 }
