@@ -58,20 +58,18 @@ namespace WebApi
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // Configure the HTTP request pipeline.
-            if (env.IsDevelopment())
+
+            app.UseDeveloperExceptionPage(); // Optional: For detailed error pages in Development
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
             {
-                app.UseDeveloperExceptionPage(); // Optional: For detailed error pages in Development
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "BitcubeDeveloperTask API V1"); // Update with your endpoint
-                });
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error"); // Handle exceptions gracefully in production
-                app.UseHsts(); // HTTP Strict Transport Security
-            }
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "BitcubeDeveloperTask API V1"); // Update with your endpoint
+            });
+
+
+            app.UseExceptionHandler("/Home/Error"); // Handle exceptions gracefully in production
+            app.UseHsts(); // HTTP Strict Transport Security
+
 
             app.UseHttpsRedirection();
             app.UseRouting(); // Add routing middleware
