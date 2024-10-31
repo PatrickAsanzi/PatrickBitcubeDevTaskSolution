@@ -1,30 +1,26 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
-    public class User : IdentityUser
+    public class ApplicationUser : IdentityUser
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; private set; }
         [Required]
         public string FirstName { get; private set; }
         [Required]
         public string LastName { get; private set; }
-        public string? Username { get; private set; }
         [Required]
         public string ApiKey { get; private set; }
 
         private readonly List<Product> _products = new List<Product>();
         public IReadOnlyCollection<Product> Products => _products.AsReadOnly();
 
-        public User(string firstName, string lastName, string username)
+        public ApplicationUser(string firstName, string lastName)
         {
             FirstName = firstName ?? throw new ArgumentNullException(nameof(firstName));
             LastName = lastName ?? throw new ArgumentNullException(nameof(lastName));
-            Username = username;
             ApiKey = GenerateApiKey();
         }
 
