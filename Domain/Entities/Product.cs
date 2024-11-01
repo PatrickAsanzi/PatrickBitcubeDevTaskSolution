@@ -11,7 +11,7 @@ namespace Domain.Entities
         public string? Name { get; private set; }
         public decimal Price { get; private set; }
         public int Quantity { get; private set; }
-        public string UserId { get; private set; }
-        public ApplicationUser? User { get; private set; }  // Navigation property to User
+        public virtual string UserId { get; private set; }
+        public virtual ApplicationUser? User { get; private set; }  // Navigation property to User
     }
 }

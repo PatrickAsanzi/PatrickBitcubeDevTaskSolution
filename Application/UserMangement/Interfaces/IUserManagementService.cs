@@ -4,6 +4,6 @@ namespace Domain.Services
 {
     public interface IUserManagementService
     {
-        public ViewUserDto Create(UserCreateDto userCreateDto); 
+        public Task<CreateUserResultDto> Create(UserCreateDto userCreateDto); 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace Infrastructure
 {
@@ -24,6 +25,17 @@ namespace Infrastructure
                 .HasOne(p => p.User)
                 .WithMany(u => u.Products)
                 .HasForeignKey(p => p.UserId);
+        }
+    }
+
+    public class BitcubeDevTaskDbContextFactory : IDesignTimeDbContextFactory<BitcubeDevTaskDbContext>
+    {
+        public BitcubeDevTaskDbContext CreateDbContext(string[] args = null)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<BitcubeDevTaskDbContext>();
+            optionsBuilder.UseSqlite("Data Source=C:\\Users\\patri\\source\\repos\\BitcubeDeveloperTaskSolutionAPI\\Infrastructure\\Data\\db.sqlite");
+
+            return new BitcubeDevTaskDbContext(optionsBuilder.Options);
         }
     }
 }
