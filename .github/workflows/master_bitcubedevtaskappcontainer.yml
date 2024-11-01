@@ -31,7 +31,7 @@ jobs:
       with:
         push: true
         tags: bitcubedevtaskcontainer.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_d5e855fc9f1e4f2c98c83b9f3896576f }}/webapi:${{ github.sha }}
-        file: ./Dockerfile
+        file: ./WebApi/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
