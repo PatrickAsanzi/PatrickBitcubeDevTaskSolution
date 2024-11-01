@@ -3,24 +3,43 @@ using Domain;
 using Domain.Entities;
 using Domain.Repositories;
 using Domain.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace Application.UserMangement
 {
-    public class UserManagementService: IUserManagementService
+    public class UserManagementService : IUserManagementService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public UserManagementService(IUnitOfWork unitOfWork)
+        private readonly UserManager<ApplicationUser> _userManager;
+        public UserManagementService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
 
-        public ViewUserDto Create(UserCreateDto userCreateDto)
+        public async Task<CreateUserResultDto> Create(UserCreateDto userCreateDto)
         {
-            var user = new ApplicationUser(userCreateDto.FirstName, userCreateDto.LastName);
-            var result = _unitOfWork.UserRepository.Add(user);
-            _unitOfWork.Commit();
-            return ViewUserDtoMapper.ToViewUserDto(result);
+            var user = new ApplicationUser(userCreateDto.FirstName, userCreateDto.LastName, userCreateDto?.UserName, userCreateDto?.Email);
+
+            var result = await _userManager.CreateAsync(user, userCreateDto.Password);
+            await _unitOfWork.CommitAsync();
+
+            if (result.Succeeded)
+            {
+                return new CreateUserResultDto
+                {
+                    Succeeded = true,
+                    ApiKey = user.ApiKey,
+                    UserName = user.UserName,
+                    Email = user.Email
+                };
+            }
+            return new CreateUserResultDto
+            {
+                Succeeded = false,
+                Errors = result.Errors
+            };
 
         }
     }

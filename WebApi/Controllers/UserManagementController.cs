@@ -15,15 +15,20 @@ namespace WebApi.Controllers
         }
 
         [HttpPost("CreateUser")]
-        public ActionResult<ViewUserDto> CreateUser([FromBody] UserCreateDto userCreateDto)
+        public async Task<IActionResult> CreateUser([FromBody] UserCreateDto userCreateDto)
         {
-            var user = _userManagementService.Create(userCreateDto);
+             var result = await _userManagementService.Create(userCreateDto);
 
-            if (user == null) // Check if user creation failed
+            if (result.Succeeded)
             {
-                return BadRequest("User creation failed.");
+                return Ok(new CreateUserResultDto() { ApiKey = result.ApiKey, Email = result.Email, UserName = result.UserName, Succeeded = result.Succeeded}); 
             }
-            return Ok(user);
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(error.Code, error.Description); 
+            }
+            return BadRequest(ModelState);
         }
     }
 }

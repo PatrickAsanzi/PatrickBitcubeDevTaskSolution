@@ -1,6 +1,7 @@
 ﻿using Application.ProductManagement;
 using Application.UserMangement;
 using Domain;
+using Domain.Entities;
 using Domain.Repositories;
 using Domain.Services;
 using Infrastructure;
@@ -26,7 +27,7 @@ namespace WebApi
                 options.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
 
             // Configure Identity
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<BitcubeDevTaskDbContext>()
                 .AddDefaultTokenProviders();
 

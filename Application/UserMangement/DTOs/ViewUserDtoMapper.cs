@@ -4,18 +4,15 @@ namespace Application.UserMangement.DTOs
 {
     public static class ViewUserDtoMapper
     {
-        public static ViewUserDto ToViewUserDto(ApplicationUser user)
+        public static CreateUserResultDto ToViewUserDto(ApplicationUser user)
         {
             if (user == null)
             {
                 return null; // or throw an exception if preferred
             }
 
-            return new ViewUserDto
+            return new CreateUserResultDto
             {
-                UserId = user.UserId,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
                 ApiKey = user.ApiKey,
                 UserName = user.UserName,
                 Email = user.Email,
