@@ -9,12 +9,11 @@ services:
       - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development  # Use Development for easier debugging
-      - ConnectionStrings__DefaultConnection=Data Source=/data/db.sqlite  # Use volume path
+      - ConnectionStrings__DefaultConnection=Data Source=/data/db.sqlite  # Set the connection string
     volumes:
       - ./Infrastructure/Data:/data  # Mount the local folder to /data in the container
 
-# Removed db service since SQLite is managed by the webapi service
-
+# Define volumes if you need to persist SQLite data separately
 volumes:
   sqlite_data:
-    driver: local  # Not needed if not used
+    driver: local  # This is optional for SQLite, as the volume is handled in the service definition

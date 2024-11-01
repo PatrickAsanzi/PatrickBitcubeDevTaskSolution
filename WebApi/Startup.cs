@@ -58,23 +58,32 @@ namespace WebApi
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // Configure the HTTP request pipeline.
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage(); // Detailed error pages in Development
+            }
+            else
+            {
+                // Error handling for Production
+                app.UseExceptionHandler("/Home/Error"); // Handle exceptions gracefully
+                app.UseHsts(); // HTTP Strict Transport Security
+            }
 
-            app.UseDeveloperExceptionPage(); // Optional: For detailed error pages in Development
+            // Swagger setup for both environments
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "BitcubeDeveloperTask API V1"); // Update with your endpoint
+                c.RoutePrefix = "swagger"; // Optional: change the route prefix if desired
             });
 
-
-            app.UseExceptionHandler("/Home/Error"); // Handle exceptions gracefully in production
-            app.UseHsts(); // HTTP Strict Transport Security
-
-
-            app.UseHttpsRedirection();
+            app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
             app.UseRouting(); // Add routing middleware
 
-            app.UseAuthorization();
+            // Configure CORS
+            app.UseCors("CorsPolicy"); // Apply the defined CORS policy
+
+            app.UseAuthorization(); // Enable authorization middleware
 
             // Map controllers to endpoints
             app.UseEndpoints(endpoints =>
