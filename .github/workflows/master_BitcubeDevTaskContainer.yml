@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: bitcubecontainer.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_1fa5a71dd9cb49e4ba400cde72e219fe | toLowerCase }}/webapi:latest
+        tags: bitcubecontainer.azurecr.io/${{ secrets.AzureAppService_ContainerUsername_1fa5a71dd9cb49e4ba400cde72e219fe}}/webapi:latest
         file: ./Dockerfile
 
   deploy:
