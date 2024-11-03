@@ -1,6 +1,5 @@
 ﻿using Domain.Entities;
 using Domain.Repositories;
-using System.Reflection.Metadata.Ecma335;
 
 namespace Infrastructure.Repositories
 {
@@ -13,21 +12,9 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<ApplicationUser> GetByIdAsync(int userId)
+        public async Task<ApplicationUser> GetByIdAsync(string userId)
         {
             return await _context.Users.FindAsync(userId);
-        }
-
-        public ApplicationUser Add(ApplicationUser user)
-        {
-           var result = _context.Users.Add(user);
-            return result.Entity; 
-        }
-
-        public async Task UpdateAsync(ApplicationUser user)
-        {
-            _context.Users.Update(user);
-           
         }
 
         public async Task DeleteAsync(int userId)

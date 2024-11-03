@@ -3,6 +3,7 @@ using System;
 using Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(BitcubeDevTaskDbContext))]
-    partial class BitcubeDevTaskDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241102023039_Addcheckoutitem")]
+    partial class Addcheckoutitem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
@@ -111,29 +114,14 @@ namespace Infrastructure.Migrations
                     b.ToTable("CheckoutItems");
                 });
 
-            modelBuilder.Entity("Domain.Entities.CheckoutItemProduct", b =>
-                {
-                    b.Property<int>("CheckoutItemId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("ProductId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("CheckoutItemId", "ProductId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("CheckoutItemProduct");
-                });
-
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
-                    b.Property<string>("ProductId")
+                    b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("CheckoutItemId")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
@@ -149,6 +137,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("ProductId");
+
+                    b.HasIndex("CheckoutItemId");
 
                     b.HasIndex("UserId");
 
@@ -283,27 +273,12 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.CheckoutItemProduct", b =>
-                {
-                    b.HasOne("Domain.Entities.CheckoutItem", "CheckoutItem")
-                        .WithMany("CheckoutItemProducts")
-                        .HasForeignKey("CheckoutItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Product", "Product")
-                        .WithMany("CheckoutItemProducts")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CheckoutItem");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
+                    b.HasOne("Domain.Entities.CheckoutItem", null)
+                        .WithMany("Products")
+                        .HasForeignKey("CheckoutItemId");
+
                     b.HasOne("Domain.Entities.ApplicationUser", "User")
                         .WithMany("Products")
                         .HasForeignKey("UserId")
@@ -371,12 +346,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.CheckoutItem", b =>
                 {
-                    b.Navigation("CheckoutItemProducts");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Product", b =>
-                {
-                    b.Navigation("CheckoutItemProducts");
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

@@ -12,7 +12,8 @@ namespace Infrastructure
         {
         }
 
-        public DbSet<Product> Product { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<CheckoutItem> CheckoutItems { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,6 +26,19 @@ namespace Infrastructure
                 .HasOne(p => p.User)
                 .WithMany(u => u.Products)
                 .HasForeignKey(p => p.UserId);
+
+            modelBuilder.Entity<CheckoutItemProduct>()
+                .HasKey(cp => new { cp.CheckoutItemId, cp.ProductId });
+
+            modelBuilder.Entity<CheckoutItemProduct>()
+                .HasOne(cp => cp.CheckoutItem)
+                .WithMany(ci => ci.CheckoutItemProducts)
+                .HasForeignKey(cp => cp.CheckoutItemId);
+
+            modelBuilder.Entity<CheckoutItemProduct>()
+                .HasOne(cp => cp.Product)
+                .WithMany(p => p.CheckoutItemProducts)
+                .HasForeignKey(cp => cp.ProductId);
         }
     }
 

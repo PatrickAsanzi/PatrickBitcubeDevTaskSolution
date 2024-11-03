@@ -22,25 +22,21 @@ namespace WebApi
 
         public void ConfigureServices(IServiceCollection services)
         {
-            // Add SQLite DbContext
             services.AddDbContext<BitcubeDevTaskDbContext>(options =>
                 options.UseSqlite(_configuration.GetConnectionString("DefaultConnection")));
 
-            // Configure Identity
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<BitcubeDevTaskDbContext>()
                 .AddDefaultTokenProviders();
 
-            // Add CORS policy
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
             {
                 builder.AllowAnyMethod()
                        .AllowAnyHeader()
-                       .WithOrigins("https://your-allowed-origin.com") // Specify allowed origins here
+                       .WithOrigins("https://your-allowed-origin.com") 
                        .AllowCredentials();
             }));
 
-            // Add your repository interfaces and implementations for Dependency Injection
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IUserManagementService, UserManagementService>();
@@ -48,48 +44,42 @@ namespace WebApi
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            // Add services to the container
             services.AddControllers();
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // Configure the HTTP request pipeline.
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage(); // Detailed error pages in Development
+                app.UseDeveloperExceptionPage(); 
             }
             else
             {
-                // Error handling for Production
-                app.UseExceptionHandler("/Home/Error"); // Handle exceptions gracefully
-                app.UseHsts(); // HTTP Strict Transport Security
+                app.UseExceptionHandler("/Home/Error"); 
+                app.UseHsts(); 
             }
 
-            // Swagger setup for both environments
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "BitcubeDeveloperTask API V1"); // Update with your endpoint
-                c.RoutePrefix = "swagger"; // Optional: change the route prefix if desired
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "BitcubeDeveloperTask API V1");
+                c.RoutePrefix = "swagger"; 
             });
 
-            app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
-            app.UseRouting(); // Add routing middleware
+            app.UseHttpsRedirection(); 
+            app.UseRouting();
 
-            // Configure CORS
-            app.UseCors("CorsPolicy"); // Apply the defined CORS policy
+            app.UseCors("CorsPolicy");
 
-            app.UseAuthorization(); // Enable authorization middleware
+            app.UseAuthentication();
+            app.UseAuthorization();
 
-            // Map controllers to endpoints
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers(); // This line maps attribute-routed controllers to the app's request pipeline
+                endpoints.MapControllers(); 
             });
         }
     }
