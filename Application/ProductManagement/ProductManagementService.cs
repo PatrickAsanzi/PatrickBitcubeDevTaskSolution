@@ -1,7 +1,6 @@
 ﻿using Application.ProductManagement.DTOs;
 using Domain;
 using Domain.Entities;
-using Domain.Services;
 
 namespace Application.ProductManagement
 {
@@ -13,116 +12,80 @@ namespace Application.ProductManagement
             _unitOfWork = unitOfWork;
         }
 
-        public async Task AddProductToCheckoutAsync(string apiKey, string productId, int quantity)
+      
+        public async Task<ViewCreateProductDto> CreateProductAsync(CreateProductDto createProductDto, string userId)
         {
-            var checkoutItem = await _unitOfWork.ProductRepository.GetByApiKeyAsync(apiKey, false);
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
 
-            if (checkoutItem == null)
-            {
-                checkoutItem = new CheckoutItem(apiKey);
-                _unitOfWork.ProductRepository.Add(checkoutItem);
-            }
+            if (user == null)
+                throw new ArgumentException("User not found.");
 
+            if (_unitOfWork.ProductRepository.ProductNameExistsAsync(createProductDto.Name).Result)
+                throw new ArgumentException("Product name already exists");
+
+            var product = new Product(
+                createProductDto.Name,
+                createProductDto.Price,
+                createProductDto.Quantity,
+                user.Id);
+            user.AddProduct(product);
+
+            await _unitOfWork.ProductRepository.AddAsync(product);
+            await _unitOfWork.CommitAsync();
+            return ViewProductDtoMapper.ToViewProductDto(product);
+        }
+        public IEnumerable<ViewCreateProductDto> GetAllUserProducts(string userId)
+        {
+            return _unitOfWork.ProductRepository.GetProductsByUserIdAsync(userId).Result
+                                                .Select(x => new ViewCreateProductDto() 
+                                                { Price = x.Price, 
+                                                  ProductId = x.ProductId, 
+                                                  Name = x.Name, 
+                                                  Quantity = x.Quantity, 
+                                                  UserId = x.UserId });
+
+        }
+        public IEnumerable<ViewProductDto> GetAllProducts()
+        {
+            return _unitOfWork.ProductRepository.GetAllAsync().Result
+                                                .Select(x => new ViewProductDto() 
+                                                { Price = x.Price, 
+                                                  ProductId = x.ProductId, 
+                                                  ProductName = x.Name}).ToList();
+           
+        }
+        public async Task<ViewCreateProductDto> UpdateProductAsync(string productId, CreateProductDto createProductDto, string userId)
+        {
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
 
             if (product == null)
                 throw new ArgumentException("Product not found.");
 
-            checkoutItem.AddProduct(product, quantity);
+            if (product.UserId != userId)
+                throw new UnauthorizedAccessException("You do not have permission to update this product.");
+
+            product.Update(
+                createProductDto.Name,
+                createProductDto.Price,
+                createProductDto.Quantity
+            );
 
             await _unitOfWork.CommitAsync();
+
+            return ViewProductDtoMapper.ToViewProductDto(product);
         }
-
-        public async Task<CheckoutItemDto> CompleteCheckoutAsync(string apiKey)
+        public async Task DeleteProductAsync(string productId, string userId)
         {
-            var checkoutItem = await _unitOfWork.ProductRepository.GetByApiKeyAsync(apiKey, false);
+            var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
 
-            if (checkoutItem == null)
-                throw new ArgumentException("Checkout item not found.");
+            if (product == null)
+                throw new ArgumentException("Product not found.");
 
-            decimal totalAmount = checkoutItem.CheckoutItemProducts
-                                              .Sum(checkoutProduct => checkoutProduct.Product.Price * checkoutProduct.Quantity);
+            if (product.UserId != userId)
+                throw new UnauthorizedAccessException("You do not have permission to delete this product.");
 
-            // Check quantities against available stock before proceeding
-            foreach (var checkoutProduct in checkoutItem.CheckoutItemProducts)
-            {
-                var product = await _unitOfWork.ProductRepository.GetByIdAsync(checkoutProduct.ProductId);
-                if (product == null)
-                    throw new ArgumentException($"Product with ID {checkoutProduct.ProductId} not found.");
-
-                // Check if the requested quantity exceeds available stock
-                if (checkoutProduct.Quantity > product.Quantity)
-                {
-                    throw new InvalidOperationException($"Insufficient quantity for product '{product.Name}'. Available: {product.Quantity}, Requested: {checkoutProduct.Quantity}.");
-                }
-            }
-
-            // Deduct quantities from the database for each product in the checkout
-            foreach (var checkoutProduct in checkoutItem.CheckoutItemProducts)
-            {
-                var product = await _unitOfWork.ProductRepository.GetByIdAsync(checkoutProduct.ProductId);
-                if (product != null)
-                {
-                    product.DeductQuantity(checkoutProduct.Quantity); // Use the new method to deduct quantity
-                }
-            }
-
-            checkoutItem.CompleteCheckout();
-            await _unitOfWork.CommitAsync();
-
-            return new CheckoutItemDto
-            {
-                IsComplete = true,
-                TotalCost = totalAmount,
-                Products = checkoutItem.CheckoutItemProducts
-                                       .Select(x => new CheckoutProductDto
-                                       {
-                                           Name = x.Product.Name,
-                                           Price = x.Product.Price,
-                                           Quantity = x.Quantity
-                                       }).ToList()
-            };
-        }
-
-        public async Task RemoveProductFromCheckoutAsync(string apiKey, string productId, int quantity)
-        {
-            var checkoutItem = await _unitOfWork.ProductRepository.GetByApiKeyAsync(apiKey, false);
-
-            if (checkoutItem == null)
-                throw new ArgumentException("Checkout item not found.");
-
-            var productToRemove = checkoutItem.CheckoutItemProducts
-                                              .FirstOrDefault(x => x.ProductId == productId);
-
-            if (productToRemove == null)
-                throw new ArgumentException("Product not found in the checkout basket.");
-
-            // Remove the product from the checkout item's product list
-            checkoutItem.RemoveProduct(productToRemove.Product, quantity);
-
+            _unitOfWork.ProductRepository.Remove(product);
             await _unitOfWork.CommitAsync();
         }
-
-        public async Task<CheckoutItemDto> GetCheckoutItemAsync(string apiKey)
-        {
-            var checkoutItem = await _unitOfWork.ProductRepository.GetByApiKeyAsync(apiKey, false);
-
-            if (checkoutItem == null)
-                throw new ArgumentException("Checkout item not found.");
-
-            // Map the checkout item to a DTO
-            var checkoutItemDto = new CheckoutItemDto
-            {
-                IsComplete = checkoutItem.IsComplete,
-                Products = checkoutItem.CheckoutItemProducts.Select(x => new CheckoutProductDto()
-                {
-                    Name = x.Product.Name,
-                    Price = x.Product.Price,
-                    Quantity = x.Quantity
-                }).ToList()
-            };
-            return checkoutItemDto;
-        }
-
     }
 }

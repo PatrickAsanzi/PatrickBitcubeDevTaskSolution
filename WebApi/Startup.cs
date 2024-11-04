@@ -1,9 +1,9 @@
-﻿using Application.ProductManagement;
+﻿using Application.CheckoutProcess;
+using Application.ProductManagement;
 using Application.UserMangement;
 using Domain;
 using Domain.Entities;
 using Domain.Repositories;
-using Domain.Services;
 using Infrastructure;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -41,6 +41,7 @@ namespace WebApi
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IUserManagementService, UserManagementService>();
             services.AddScoped<IProductManagementService, ProductManagementService>();
+            services.AddScoped<ICheckoutProcessService, CheckoutProcessService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 

@@ -1,10 +1,9 @@
-﻿using Application.UserMangement.DTOs;
+﻿using Application.UserMangement;
+using Application.UserMangement.DTOs;
 using Domain.Entities;
-using Domain.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 
 namespace WebApi.Controllers
@@ -15,8 +14,8 @@ namespace WebApi.Controllers
     {
         private readonly IUserManagementService _userManagementService;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        public UserManagementController(IUserManagementService userManagementService, SignInManager<ApplicationUser> signInManager) 
-        { 
+        public UserManagementController(IUserManagementService userManagementService, SignInManager<ApplicationUser> signInManager)
+        {
             _userManagementService = userManagementService;
             _signInManager = signInManager;
         }
@@ -28,7 +27,7 @@ namespace WebApi.Controllers
 
             if (result.Succeeded)
             {
-                return Ok(new CreateUserResultDto() { ApiKey = result.ApiKey, Email = result.Email, UserName = result.UserName, Succeeded = result.Succeeded });
+                return Ok(result);
             }
 
             foreach (var error in result.Errors)
@@ -37,72 +36,19 @@ namespace WebApi.Controllers
             }
             return BadRequest(ModelState);
         }
-        [Authorize]
-        [HttpPost("addProductToUser")]
-        public async Task<IActionResult> AddProduct([FromBody] CreateProductDto createProductDto)
-        {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-           var result = await _userManagementService.AddProductAsync(createProductDto, userId);
-            return Ok(result);
-        }
-        [Authorize]
-        [HttpPut("updateProduct/{productId}")]
-        public async Task<IActionResult> UpdateProduct([FromQuery] string productId, [FromBody] CreateProductDto updateProductDto)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            try
-            {
-                var result = await _userManagementService.UpdateProductAsync(productId, updateProductDto, userId);
-                return Ok(result); // Return the updated product details
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(ex.Message); // 404 Not Found
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Forbid(ex.Message); // 403 Forbidden
-            }
-        }
 
         [Authorize]
-        [HttpDelete("deleteProduct/{productId}")]
-        public async Task<IActionResult> DeleteProduct([FromQuery] string productId)
+        [HttpGet("view/{userId}")]
+        public IActionResult GetUserDetails(string userId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userDetails = _userManagementService.GetUserDetailsByUserId(userId);
 
-            try
+            if (userDetails == null)
             {
-                await _userManagementService.DeleteProductAsync(productId, userId);
-                return NoContent(); // 204 No Content
+                return NotFound(new { Message = "User not found" });
             }
-            catch (ArgumentException ex)
-            {
-                return NotFound(ex.Message); // 404 Not Found
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return Forbid(ex.Message); // 403 Forbidden
-            }
-        }
 
-        [Authorize]
-        [HttpGet("products")]
-        public async Task<IActionResult> GetAllProducts()
-        {
-            var products = await _userManagementService.GetAllProductsAsync();
-            return Ok(products); // Returns 200 OK with the list of products
+            return Ok(userDetails);
         }
 
         [HttpPost("login")]
@@ -111,11 +57,11 @@ namespace WebApi.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(loginInputModel.UserName, loginInputModel.Password, false, lockoutOnFailure: false);
+                var result = await _signInManager.PasswordSignInAsync(loginInputModel.UserEmail, loginInputModel.Password, false, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
 
-                    return Ok(new { message = "Login successfull"});
+                    return Ok(new { message = "Login successfull" });
                 }
                 if (result.IsLockedOut)
                 {
@@ -128,6 +74,13 @@ namespace WebApi.Controllers
             }
 
             return BadRequest(new { message = "Login was not successfull, try again" });
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok(new { message = "Logout successful" });
         }
     }
 }

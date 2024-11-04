@@ -1,7 +1,8 @@
-﻿using Application.ProductManagement.DTOs;
-using Domain.Services;
+﻿using Application.ProductManagement;
+using Application.ProductManagement.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace WebApi.Controllers
 {
@@ -18,51 +19,79 @@ namespace WebApi.Controllers
         }
 
         [Authorize]
-        [HttpPost("addProduct")]
-        public async Task<IActionResult> AddProduct([FromBody] AddCheckoutProductDto addCheckoutProductDto)
+        [HttpPost("create")]
+        public async Task<IActionResult> CreateProductAsync([FromBody] CreateProductDto createProductDto)
         {
-            await _productManagementService.AddProductToCheckoutAsync(addCheckoutProductDto.ApiKey, addCheckoutProductDto.ProductId, addCheckoutProductDto.Quantity);
-            return Ok();
-        }
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        [Authorize]
-        [HttpPost("complete")]
-        public async Task<IActionResult> CompleteCheckout([FromQuery] string apiKey)
-        {
-            var result = await _productManagementService.CompleteCheckoutAsync(apiKey);
+            var result = await _productManagementService.CreateProductAsync(createProductDto, userId);
             return Ok(result);
         }
 
         [Authorize]
-        [HttpDelete("removeProductFromCheckout")]
-        public async Task<IActionResult> RemoveProductFromCheckout([FromBody] AddCheckoutProductDto addCheckoutProductDto)
+        [HttpGet("get-all/{userId}")]
+        public IActionResult GetAllUserProducts(string userId)
         {
+            var products = _productManagementService.GetAllUserProducts(userId);
+            return Ok(products);
+        }
+
+        [Authorize]
+        [HttpGet("get-all")]
+        public IActionResult GetAllProducts()
+        {
+            var products = _productManagementService.GetAllProducts();
+            return Ok(products);
+        }
+
+        [Authorize]
+        [HttpPut("update/{productId}")]
+        public async Task<IActionResult> UpdateProductAsync(string productId, [FromBody] CreateProductDto updateProductDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             try
             {
-                await _productManagementService.RemoveProductFromCheckoutAsync(addCheckoutProductDto.ApiKey, addCheckoutProductDto.ProductId, addCheckoutProductDto.Quantity);
-                return NoContent(); // 204 No Content
+                var result = await _productManagementService.UpdateProductAsync(productId, updateProductDto, userId);
+                return Ok(result); 
             }
             catch (ArgumentException ex)
             {
-                return NotFound(ex.Message); // 404 Not Found
+                return NotFound(ex.Message); 
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Forbid(ex.Message);
             }
         }
 
-        [HttpGet("checkout")]
-        public async Task<IActionResult> ViewCheckoutItem(string apiKey)
+        [Authorize]
+        [HttpDelete("delete/{productId}")]
+        public async Task<IActionResult> DeleteProductAsync(string productId)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             try
             {
-                var checkoutItemDto = await _productManagementService.GetCheckoutItemAsync(apiKey);
-                return Ok(checkoutItemDto);
+                await _productManagementService.DeleteProductAsync(productId, userId);
+                return NoContent(); 
             }
             catch (ArgumentException ex)
             {
-                return NotFound(ex.Message); // Return 404 if checkout item not found
+                return NotFound(ex.Message); 
             }
-            catch (Exception ex)
+            catch (UnauthorizedAccessException ex)
             {
-                return StatusCode(500, "An error occurred while retrieving the checkout item."); // Handle other exceptions
+                return Forbid(ex.Message); 
             }
         }
     }

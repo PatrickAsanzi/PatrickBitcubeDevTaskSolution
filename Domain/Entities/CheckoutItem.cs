@@ -32,41 +32,38 @@ namespace Domain.Entities
 
             if (existingProduct != null)
             {
-                // Increase quantity of existing product
-                existingProduct.Quantity += quantity;
+                // Use IncreaseQuantity method to update the quantity of the existing product
+                existingProduct.IncreaseQuantity(quantity);
             }
             else
             {
                 // Add new product with specified quantity
-                var checkoutItemProduct = new CheckoutItemProduct
-                {
-                    CheckoutItem = this,
-                    Product = product,
-                    Quantity = quantity
-                };
+                var checkoutItemProduct = new CheckoutItemProduct(product, quantity);
+                checkoutItemProduct.CheckoutItem = this;
                 _checkoutItemProducts.Add(checkoutItemProduct);
             }
         }
+
         public void RemoveProduct(Product product, int quantity)
         {
             if (IsComplete)
                 throw new InvalidOperationException("Cannot remove products from a completed checkout.");
 
             // Find the product in the checkout
-            var existingProduct = _checkoutItemProducts
+            var checkoutItemProduct = _checkoutItemProducts
                 .FirstOrDefault(cp => cp.ProductId == product.ProductId);
 
-            if (existingProduct == null)
+            if (checkoutItemProduct == null)
                 throw new InvalidOperationException("Product not found in the checkout.");
 
-            // Decrease quantity or remove product if quantity becomes zero or less
-            if (existingProduct.Quantity > quantity)
+            // Use DecreaseQuantity to remove the specified amount or remove product entirely if quantity reaches zero
+            if (checkoutItemProduct.Quantity > quantity)
             {
-                existingProduct.Quantity -= quantity;
+                checkoutItemProduct.DecreaseQuantity(quantity);
             }
             else
             {
-                _checkoutItemProducts.Remove(existingProduct);
+                _checkoutItemProducts.Remove(checkoutItemProduct);
             }
         }
 

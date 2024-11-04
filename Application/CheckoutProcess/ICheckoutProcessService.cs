@@ -1,12 +1,12 @@
-﻿using Application.ProductManagement.DTOs;
+﻿using Application.CheckoutProcess.DTOs;
 
-namespace Domain.Services
+namespace Application.CheckoutProcess
 {
-    public interface IProductManagementService
+    public interface ICheckoutProcessService
     {
         Task AddProductToCheckoutAsync(string apiKey, string productId, int quanity);
+        Task<CheckoutItemDto> GetCurrentBasketAsync(string apiKey);
         Task<CheckoutItemDto> CompleteCheckoutAsync(string apiKey);
-        Task<CheckoutItemDto> GetCheckoutItemAsync(string apiKey); 
         Task RemoveProductFromCheckoutAsync(string apiKey, string productId, int qunatity);
     }
 }

@@ -8,14 +8,14 @@ namespace Application.UserMangement.DTOs
         {
             if (user == null)
             {
-                return null; // or throw an exception if preferred
+                return null; 
             }
 
             return new CreateUserResultDto
             {
                 ApiKey = user.ApiKey,
-                UserName = user.UserName,
                 Email = user.Email,
+                UserId = user.Id,
             };
         }
     }

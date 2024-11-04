@@ -6,5 +6,6 @@ namespace Domain.Repositories
     {
         Task<ApplicationUser> GetByIdAsync(string userId);
         Task DeleteAsync(int userId);
+        ApplicationUser GetByAPIKey(string apiKey);
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Application.UserMangement.DTOs
+﻿namespace Application.ProductManagement.DTOs
 {
     public class CreateProductDto
     {

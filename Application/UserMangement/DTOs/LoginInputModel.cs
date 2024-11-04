@@ -5,7 +5,7 @@ namespace Application.UserMangement.DTOs
     public class LoginInputModel
     {
         [Required]
-        public string UserName { get; set; }
+        public string UserEmail { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

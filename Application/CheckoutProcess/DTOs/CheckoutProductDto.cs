@@ -1,4 +1,4 @@
-﻿namespace Application.ProductManagement.DTOs
+﻿namespace Application.CheckoutProcess.DTOs
 {
     public class CheckoutProductDto
     {

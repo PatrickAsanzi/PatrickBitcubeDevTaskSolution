@@ -25,5 +25,10 @@ namespace Infrastructure.Repositories
                 _context.Users.Remove(user);
             }
         }
+
+        public ApplicationUser GetByAPIKey(string apiKey)
+        {
+            return _context.Users.Where(x => x.ApiKey == apiKey).FirstOrDefault();
+        }
     }
 }
