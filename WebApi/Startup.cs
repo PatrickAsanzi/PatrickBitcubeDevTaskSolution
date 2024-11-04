@@ -29,14 +29,6 @@ namespace WebApi
                 .AddEntityFrameworkStores<BitcubeDevTaskDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
-            {
-                builder.AllowAnyMethod()
-                       .AllowAnyHeader()
-                       .WithOrigins("https://your-allowed-origin.com") 
-                       .AllowCredentials();
-            }));
-
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IUserManagementService, UserManagementService>();
@@ -55,32 +47,31 @@ namespace WebApi
         {
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage(); 
+                app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error"); 
-                app.UseHsts(); 
+                app.UseExceptionHandler("/Home/Error");
+                app.UseHsts();
             }
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "BitcubeDeveloperTask API V1");
-                c.RoutePrefix = "swagger"; 
+                c.RoutePrefix = "swagger";
             });
 
-            app.UseHttpsRedirection(); 
+            app.UseHttpsRedirection();
             app.UseRouting();
 
-            app.UseCors("CorsPolicy");
 
             app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers(); 
+                endpoints.MapControllers();
             });
         }
     }

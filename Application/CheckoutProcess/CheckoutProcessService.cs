@@ -32,7 +32,6 @@ namespace Application.CheckoutProcess
             }
 
             checkoutItem.AddProduct(product, quantity);
-
             await _unitOfWork.CommitAsync();
         }
 
@@ -43,7 +42,6 @@ namespace Application.CheckoutProcess
             if (checkoutItem == null)
                 throw new ArgumentException("Checkout item not found.");
 
-            // Map the checkout item to a DTO
             var checkoutItemDto = new CheckoutItemDto
             {
                 IsComplete = checkoutItem.IsComplete,
@@ -109,7 +107,6 @@ namespace Application.CheckoutProcess
                 throw new ArgumentException("Product not found in the checkout basket.");
 
             checkoutItem.RemoveProduct(productToRemove, quantity);
-
             await _unitOfWork.CommitAsync();
         }
     }

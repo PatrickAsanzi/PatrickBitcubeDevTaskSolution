@@ -2,7 +2,6 @@
 {
     public class CheckoutItemProduct
     {
-        
         public int CheckoutItemId { get; set; }
         public CheckoutItem CheckoutItem { get; set; }
 
@@ -13,7 +12,6 @@
 
         private CheckoutItemProduct() { }
 
-        // Custom constructor for use in business logic
         public CheckoutItemProduct(Product product, int quantity)
         {
             Product = product;

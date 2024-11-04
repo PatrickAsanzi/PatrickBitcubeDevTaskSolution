@@ -28,9 +28,8 @@ namespace Application.ProductManagement
                 createProductDto.Price,
                 createProductDto.Quantity,
                 user.Id);
-            user.AddProduct(product);
 
-            await _unitOfWork.ProductRepository.AddAsync(product);
+            user.AddProduct(product);
             await _unitOfWork.CommitAsync();
             return ViewProductDtoMapper.ToViewProductDto(product);
         }
@@ -69,7 +68,8 @@ namespace Application.ProductManagement
                 createProductDto.Price,
                 createProductDto.Quantity
             );
-
+            
+            _unitOfWork.ProductRepository.Update(product);
             await _unitOfWork.CommitAsync();
 
             return ViewProductDtoMapper.ToViewProductDto(product);
