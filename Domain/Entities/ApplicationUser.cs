@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities
 {
@@ -16,11 +15,11 @@ namespace Domain.Entities
         private readonly List<Product> _products = new List<Product>();
         public IReadOnlyCollection<Product> Products => _products;
 
-        public ApplicationUser(string firstName, string lastName, string? userName, string? email)
+        public ApplicationUser(string firstName, string lastName, string? email)
         {
             FirstName = firstName ?? throw new ArgumentNullException(nameof(firstName));
             LastName = lastName ?? throw new ArgumentNullException(nameof(lastName));
-            UserName = userName ?? throw new ArgumentNullException(nameof(userName));
+            UserName = email ?? throw new ArgumentNullException(nameof(email));
             Email = email ?? throw new ArgumentNullException(nameof(email));
 
             ApiKey = GenerateApiKey();

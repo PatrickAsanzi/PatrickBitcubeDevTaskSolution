@@ -26,3 +26,6 @@ jobs:
 
     - name: Build
       run: dotnet build BitcubeDeveloperTaskSolution.sln --no-restore
+    
+    - name: Test
+      run: dotnet test BitcubeDeveloperTaskSolution.sln --no-build --verbosity normal

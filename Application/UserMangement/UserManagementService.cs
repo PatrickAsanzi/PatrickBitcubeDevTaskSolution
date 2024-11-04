@@ -1,8 +1,6 @@
 ﻿using Application.UserMangement.DTOs;
 using Domain;
 using Domain.Entities;
-using Domain.Repositories;
-using Domain.Services;
 using Microsoft.AspNetCore.Identity;
 
 namespace Application.UserMangement
@@ -17,10 +15,9 @@ namespace Application.UserMangement
             _userManager = userManager;
         }
 
-
         public async Task<CreateUserResultDto> Create(UserCreateDto userCreateDto)
         {
-            var user = new ApplicationUser(userCreateDto.FirstName, userCreateDto.LastName, userCreateDto?.UserName, userCreateDto?.Email);
+            var user = new ApplicationUser(userCreateDto.FirstName, userCreateDto.LastName, userCreateDto?.Email);
 
             var result = await _userManager.CreateAsync(user, userCreateDto.Password);
             await _unitOfWork.CommitAsync();
@@ -31,8 +28,8 @@ namespace Application.UserMangement
                 {
                     Succeeded = true,
                     ApiKey = user.ApiKey,
-                    UserName = user.UserName,
-                    Email = user.Email
+                    Email = user.Email, 
+                    UserId = user.Id,
                 };
             }
             return new CreateUserResultDto
@@ -40,6 +37,18 @@ namespace Application.UserMangement
                 Succeeded = false,
                 Errors = result.Errors
             };
+        }
+
+        public CreateUserResultDto GetUserDetailsByUserId(string userId)
+        {
+            var user = _unitOfWork.UserRepository.GetByIdAsync(userId).Result;
+
+            if (user == null)
+            {
+                throw new ArgumentException("User Could not be found");
+            }
+
+            return ViewUserDtoMapper.ToViewUserDto(user);
 
         }
     }
