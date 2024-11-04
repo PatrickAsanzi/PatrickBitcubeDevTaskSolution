@@ -21,12 +21,7 @@ This project is a .NET Core application that implements a product management sys
 
 - [Prerequisites](#prerequisites)
 - [Setup Instructions](#setup-instructions)
-- [Building the Application](#building-the-application)
-- [Running the Application](#running-the-application)
-- [Running Tests](#running-tests)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
+- [Building & Running the Application](#building-and-running-the-application)
 
 ## Prerequisites
 
@@ -49,7 +44,10 @@ Before you begin, ensure you have the following installed:
 Restore the required NuGet packages by running:
 dotnet restore BitcubeDeveloperTaskSolution.sln
 
+## Building  & Runnin the Application
+
 3. **Build Docker Compose Image**
+
 *In the Solution Explorer, locate the docker-compose project.
 *Right-click on the solution in the Solution Explorer and select Set Startup Projects.
 *Make sure that Docker is running on your machine. You can check this by looking for the Docker icon in your system tray.
