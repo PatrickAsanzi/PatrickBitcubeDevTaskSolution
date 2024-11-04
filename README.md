@@ -44,17 +44,22 @@ Before you begin, ensure you have the following installed:
 Restore the required NuGet packages by running:
 dotnet restore BitcubeDeveloperTaskSolution.sln
 
-## Building  & Runnin the Application
+## Building and Running the Application
 
 3. **Build Docker Compose Image**
 
 *In the Solution Explorer, locate the docker-compose project.
+
 *Right-click on the solution in the Solution Explorer and select Set Startup Projects.
+
 *Make sure that Docker is running on your machine. You can check this by looking for the Docker icon in your system tray.
+
 * Select Build Solution or press Ctrl + Shift + B. This will trigger the Docker Compose build process.
+
 * Run the Docker containers defined in your Docker Compose file:
 Click the Run button (green arrow) in Visual Studio, or press F5 to start debugging.
 This will start the Docker containers, and you can view the output in the Output window.
+
 *Once the containers are running, you can access your application through the port specified in the Docker Compose file. For example, if your application runs on port 5000, you would access it at http://localhost:5000
 
 
