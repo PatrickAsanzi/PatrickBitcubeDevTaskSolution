@@ -18,11 +18,17 @@ jobs:
       with:
         dotnet-version: 8.0.x
 
+    - name: Check Current Directory
+      run: pwd
+
+    - name: List Files
+      run: ls -R
+
     - name: Restore dependencies
-      run: dotnet restore BitcubeDeveloperTaskSolutionAPI/BitcubeDeveloperTaskSolution.sln
+      run: dotnet restore BitcubeDeveloperTaskSolution.sln
 
     - name: Build
-      run: dotnet build BitcubeDeveloperTaskSolutionAPI/BitcubeDeveloperTaskSolution.sln --no-restore
+      run: dotnet build BitcubeDeveloperTaskSolution.sln --no-restore
     
     - name: Test
-      run: dotnet test BitcubeDeveloperTaskSolutionAPI/BitcubeDeveloperTaskSolution.sln --no-build --verbosity normal
+      run: dotnet test BitcubeDeveloperTaskSolution.sln --no-build --verbosity normal
