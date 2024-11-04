@@ -65,7 +65,8 @@ This will start the Docker containers, and you can view the output in the Output
 ## Using the API Online
 You can access the API documentation and test the endpoints using the following link: 
 (https://bitcubedevtaskappcontainer-bxehfkbpduhkd7au.southafricanorth-01.azurewebsites.net/swagger/index.html)
-Step 1: User Management
+
+* Step 1: User Management
 Create a New User:
 
 Use the "Create User" endpoint in the User Management section.
@@ -75,10 +76,11 @@ View Users:
 
 To view existing users, use the "View Users" endpoint.
 Enter the userId to retrieve the details of the user, including the email, password, userId, and API key.
-Step 2: Authentication
+
+* Step 2: Authentication
 To access most services (except for user creation), users must log in. Use the "Login" endpoint to authenticate and obtain a token.
 
-Step 3: Product Management
+* Step 3: Product Management
 After logging in, users can manage products:
 
 Create New Products:
@@ -90,7 +92,8 @@ Use the "Get All Products" endpoint to view all available products.
 Update and Delete Products:
 
 Use the relevant endpoints in the Product Management section to update or delete products.
-Step 4: Checkout Management
+
+* Step 4: Checkout Management
 Add Products to Checkout Basket:
 
 Use the "Add to Checkout Basket" endpoint.
