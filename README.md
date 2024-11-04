@@ -62,4 +62,48 @@ This will start the Docker containers, and you can view the output in the Output
 
 * Once the containers are running, you can access your application through the port specified in the Docker Compose file. For example, if your application runs on port 5000, you would access it at http://localhost:5000
 
+Using the API Online
+You can access the API documentation and test the endpoints using the following link: Bitcube Developer Task API.
+
+Step 1: User Management
+Create a New User:
+
+Use the "Create User" endpoint in the User Management section.
+Provide the required information: email, password, and userId.
+After creating a user, an API key will be generated for the user.
+View Users:
+
+To view existing users, use the "View Users" endpoint.
+Enter the userId to retrieve the details of the user, including the email, password, userId, and API key.
+Step 2: Authentication
+To access most services (except for user creation), users must log in. Use the "Login" endpoint to authenticate and obtain a token.
+
+Step 3: Product Management
+After logging in, users can manage products:
+
+Create New Products:
+
+Use the "Create Product" endpoint to add new products.
+View All Products:
+
+Use the "Get All Products" endpoint to view all available products.
+Update and Delete Products:
+
+Use the relevant endpoints in the Product Management section to update or delete products.
+Step 4: Checkout Management
+Add Products to Checkout Basket:
+
+Use the "Add to Checkout Basket" endpoint.
+Provide the product details and your API key to add products to your basket.
+View Items in Checkout Basket:
+
+Use the "View Checkout Basket" endpoint to see the items currently in your basket.
+Remove Items from Checkout Basket:
+
+Use the "Remove from Checkout Basket" endpoint to remove items.
+Complete Checkout:
+
+Once ready, use the "Complete Checkout" endpoint to calculate the totals for your checkout basket.
+
+
 
