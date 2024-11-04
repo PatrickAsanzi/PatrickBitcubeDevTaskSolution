@@ -41,6 +41,17 @@ namespace WebApi
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy", builder =>
+                {
+                    builder.AllowAnyMethod()
+                           .AllowAnyHeader()
+                           .WithOrigins("http://localhost:5000")
+                           .AllowCredentials();
+                });
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -55,6 +66,8 @@ namespace WebApi
                 app.UseHsts();
             }
 
+            app.UseCors("CorsPolicy");
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -64,7 +77,6 @@ namespace WebApi
 
             app.UseHttpsRedirection();
             app.UseRouting();
-
 
             app.UseAuthentication();
             app.UseAuthorization();
